@@ -1,28 +1,60 @@
-import React from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard,Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons'; 
+
 const LoginScreen = () => {
   const navigation = useNavigation();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+  const handleLogin = () => {
+    if (username === 'admin' && password === '123') {
+      navigation.navigate('HomePage');
+    }else if
+      (username === 'shipper' && password === '123') {
+        navigation.navigate('ShipPage');
+    } 
+    else {
+      Alert.alert('Lỗi', 'Tên đăng nhập hoặc mật khẩu không đúng');
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+      <View style={styles.container}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Icon name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-      <Text style={styles.header}>ĐĂNG NHẬP</Text>
-      <TextInput placeholder="Tên đăng nhập" style={styles.input} />
-      <TextInput placeholder="Mật khẩu" style={styles.input} secureTextEntry={true} />
-      <TouchableOpacity onPress={() => {/* Handle forgot password logic */}}>
-        <Text style={styles.link}>Quên mật khẩu</Text>
-      </TouchableOpacity>
-      <Text style={styles.text}>Bạn chưa có tài khoản?</Text>
-      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-        <Text style={styles.link}>Đăng ký</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => {/* Handle login logic */}}>
-        <Text style={styles.buttonText}>Đăng nhập</Text>
-      </TouchableOpacity>
-    </View>
+        <Text style={styles.header}>ĐĂNG NHẬP</Text>
+        <TextInput 
+          value ={username}
+          onChangeText={setUsername}
+          placeholder="Tên đăng nhập" 
+          style={styles.input} 
+        />
+        <TextInput 
+          value ={password}
+          onChangeText={setPassword}
+          placeholder="Mật khẩu" 
+          style={styles.input} 
+          secureTextEntry={true} 
+        />
+        <TouchableOpacity onPress={() => navigation.navigate('ForgotPass')}>
+          <Text style={styles.link}>Quên mật khẩu</Text>
+        </TouchableOpacity>
+        <Text style={styles.text}>Bạn chưa có tài khoản?</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+          <Text style={styles.link}>Đăng ký</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Đăng nhập</Text>
+        </TouchableOpacity>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

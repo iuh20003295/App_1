@@ -69,21 +69,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: width * 0.05, // Adjust padding based on width
   },
   header1: {
     color: '#FFFFFF',
-    fontSize: width * 0.12,
+    fontSize: width * 0.1, // Dynamic font size
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: height * 0.02,
+    marginBottom: height * 0.03, // Adjust spacing dynamically
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: {width: -1, height: 1},
     textShadowRadius: 10
   },
   header2: {
     color: '#FFFFFF',
-    fontSize: width * 0.045,
+    fontSize: width * 0.045, // Dynamic font size
     fontWeight: '600',
     textAlign: 'center',
     marginBottom: height * 0.06,
@@ -97,11 +97,11 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: 'rgba(0, 123, 255, 0.8)',
-    paddingVertical: height * 0.02,
-    paddingHorizontal: width * 0.1,
+    paddingVertical: height * 0.015, // Adjust padding dynamically
+    paddingHorizontal: width * 0.15,
     borderRadius: 30,
-    marginBottom: height * 0.02,
-    width: width * 0.8,
+    marginBottom: height * 0.03, // Adjust spacing dynamically
+    width: width * 0.7, // Adjust width dynamically
     alignItems: 'center',
     shadowColor: "#000",
     shadowOffset: {
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: width * 0.045,
+    fontSize: width * 0.045, // Dynamic font size
     textAlign: 'center',
   },
 });

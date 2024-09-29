@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Alert } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, TextInput, TouchableOpacity,StyleSheet,Keyboard, ImageBackground, Alert, ScrollView,TouchableWithoutFeedback } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -66,19 +66,29 @@ const RegisterScreen = () => {
       navigation.goBack();
     }
   };
+  const usernameInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
+  const emailInputRef = useRef(null);
+  const phoneInputRef = useRef(null);
 
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
   return (
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
     <ImageBackground style={styles.backgroundImage}>
       <View style={styles.container}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Icon name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.header}>ĐĂNG KÝ</Text>
+        <ScrollView>
         <TextInput 
           placeholder="Tên đăng nhập" 
           style={styles.input} 
           value={username}
           onChangeText={setUsername}
+          ref={usernameInputRef}
         />
         <TextInput 
           placeholder="Email" 
@@ -86,6 +96,7 @@ const RegisterScreen = () => {
           keyboardType="email-address" 
           value={email}
           onChangeText={setEmail}
+          ref={emailInputRef}
         />
         <TextInput 
           placeholder="Số điện thoại" 
@@ -93,6 +104,7 @@ const RegisterScreen = () => {
           keyboardType="phone-pad" 
           value={phoneNumber}
           onChangeText={setPhoneNumber}
+          ref={phoneInputRef}
         />
         <TextInput 
           placeholder="Mật khẩu" 
@@ -100,6 +112,7 @@ const RegisterScreen = () => {
           secureTextEntry={true}
           value={password}
           onChangeText={setPassword}
+          ref={passwordInputRef}
         />
         <TextInput 
           placeholder="Nhập lại mật khẩu" 
@@ -107,6 +120,7 @@ const RegisterScreen = () => {
           secureTextEntry={true}
           value={confirmPassword}
           onChangeText={setConfirmPassword}
+          ref={passwordInputRef}
         />
 
         <DropDownPicker
@@ -119,6 +133,8 @@ const RegisterScreen = () => {
           placeholder="Mục đích sử dụng"
           zIndex={3000}
           zIndexInverse={1000}
+
+          
         />
 
         <DropDownPicker
@@ -148,13 +164,12 @@ const RegisterScreen = () => {
         <TouchableOpacity style={styles.button} onPress={handleSignUp}>
           <Text style={styles.buttonText}>Đăng ký</Text>
         </TouchableOpacity>
+        </ScrollView>
       </View>
     </ImageBackground>
+    </TouchableWithoutFeedback>
   );
 };
-
-
-//Các styles giữ nguyên như cũ
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
@@ -207,12 +222,12 @@ const styles = StyleSheet.create({
     top: 50,
     left: 20,
     backgroundColor: '#007BFF',
-    padding: 8,
+    padding: 5,
     borderRadius: 8,
   },
   backButtonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
   }
 });

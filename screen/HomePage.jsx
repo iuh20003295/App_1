@@ -1,85 +1,187 @@
-import React from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  Keyboard,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  StyleSheet,
+  SafeAreaView,
+  Modal,
+  StatusBar,
+  Dimensions,
+  Animated
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 
+const { width, height } = Dimensions.get('window');
+const dismissKeyboard = () => {
+  Keyboard.dismiss();
+};
+
 const HomePage = () => {
+  const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
+  const slideAnim = useRef(new Animated.Value(-width * 0.75)).current;
+
+  const toggleModal = () => {
+    if (modalVisible) {
+      Animated.timing(slideAnim, {
+        toValue: -width * 0.75,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => setModalVisible(false));
+    } else {
+      setModalVisible(true);
+    }
+  };
+
+  useEffect(() => {
+    if (modalVisible) {
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [modalVisible]);
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#FFCC00" barStyle="dark-content" />
-      <View style={styles.header}>
-        <TouchableOpacity>
-          <Icon name="menu" size={24} color="#000" />
-        </TouchableOpacity>
-        <Image source={require('../img/qship-logo.png')} style={styles.logo} />
-      </View>
-      
-      <Image source={require('../img/background-signup.png')} style={styles.backgroundImage} />
-      
-      <View style={styles.content}>
-        <Text style={styles.greeting}>Xin chào, Khách</Text>
-        <Text style={styles.subTitle}>Theo dõi lô hàng QSHIP Express của bạn</Text>
-        
-        <View style={styles.trackingBox}>
-          <Icon name="qr-code-scanner" size={24} color="#CC0000" style={styles.qrIcon} />
-          <TextInput 
-            style={styles.trackingInput} 
-            placeholder="Nhập số theo dõi có 10 chữ số"
-            placeholderTextColor="#999"
-          />
-          <TouchableOpacity style={styles.trackingButton}>
-            <Icon name="arrow-forward" size={24} color="#FFF" />
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+      <SafeAreaView style={styles.container}>
+        <StatusBar backgroundColor="#FFCC00" barStyle="dark-content" />
+        <View style={styles.header}>
+          <TouchableOpacity onPress={toggleModal}>
+            <Icon name="menu" size={24} color="#000" />
           </TouchableOpacity>
         </View>
-
-        <View style={styles.loginSection}>
-          <Text style={styles.startText}>Hãy bắt đầu</Text>
-          <View style={styles.loginButtons}>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}><Text style={styles.loginButton}>Đăng nhập</Text></TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('Register')}><Text style={styles.loginButton}>Đăng ký</Text></TouchableOpacity>
+        <Modal
+          animationType="none"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={toggleModal}
+        >
+          <View style={styles.modalBackground}>
+            <Animated.View style={[
+              styles.modalContent,
+              {
+                transform: [{ translateX: slideAnim }],
+              },
+            ]}>
+              <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
+                <Icon name="close" size={24} color="#000" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modalButton}
+                onPress={() => {
+                  toggleModal();
+                  navigation.navigate('Login');
+                }}
+              >
+                <Text style={styles.modalText}>Đăng nhập</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modalButton} onPress={() => {
+                toggleModal();
+                navigation.navigate('Register');
+              }}>
+                <Text style={styles.modalText}>Đăng ký</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modalButton} onPress={() => {
+                toggleModal();
+                navigation.navigate('PriceQuote');
+              }}>
+                <Text style={styles.modalText}>Bảng giá</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modalButton} onPress={() => {
+                toggleModal();
+                navigation.navigate('Follow');
+              }}>
+                <Text style={styles.modalText}>Theo dõi</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modalButton} onPress={() => {
+                toggleModal();
+                navigation.navigate('Law');
+              }}>
+                <Text style={styles.modalText}>Pháp lý</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modalButton} onPress={() => {
+                toggleModal();
+                navigation.navigate('Location');
+              }}>
+                <Text style={styles.modalText}>Tìm điểm dịch vụ</Text>
+              </TouchableOpacity>
+              {/* <Text style={styles.footerTextModal}>2024 QSHIP Express </Text> */}
+            </Animated.View>
           </View>
+        </Modal>
+        <Image source={require('../img/backgrlogo.png')} style={styles.backgroundImage} />
+        <View style={styles.content}>
+          <Text style={styles.greeting}>Xin chào, Khách</Text>
+          <Text style={styles.subTitle}>Theo dõi lô hàng QSHIP Express của bạn</Text>
+
+          <View style={styles.trackingBox}>
+            <Icon name="qr-code-scanner" size={24} color="#CC0000" style={styles.qrIcon} />
+            <TextInput
+              style={styles.trackingInput}
+              placeholder="Nhập số theo dõi có 10 chữ số"
+              placeholderTextColor="#999"
+            />
+            <TouchableOpacity style={styles.trackingButton}>
+              <Icon name="arrow-forward" size={24} color="#FFF" />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.loginSection}>
+            <Text style={styles.startText}>Hãy bắt đầu</Text>
+            <View style={styles.loginButtons}>
+              <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                <Text style={styles.loginButton}>Đăng nhập</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                <Text style={styles.loginButton}>Đăng ký</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <TouchableOpacity style={styles.menuItem}>
+            <Icon name="description" size={24} color="orange" />
+            <Text style={styles.menuText}>Lấy báo giá</Text>
+            <Icon name="chevron-right" size={24} color="orange" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Register')}>
+            <Icon name="create" size={24} color="orange" />
+            <Text style={styles.menuText}>Tạo Lô Hàng</Text>
+            <View style={styles.newBadge}><Text style={styles.newText}>Mới</Text></View>
+            <Icon name="chevron-right" size={24} color="orange" />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('CallHelp')}>
+            <Icon name="phone" size={24} color="orange" />
+            <Text style={styles.menuText}>Gọi Để Gửi Hàng</Text>
+            <Icon name="headset-mic" size={24} color="orange" style={styles.supportIcon} />
+          </TouchableOpacity>
         </View>
-
-        <TouchableOpacity style={styles.menuItem}>
-          <Icon name="description" size={24} color="#FFCC00" />
-          <Text style={styles.menuText}>Lấy báo giá</Text>
-          <Icon name="chevron-right" size={24} color="#FFCC00" />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuItem}>
-          <Icon name="local-shipping" size={24} color="#FFCC00" />
-          <Text style={styles.menuText}>Tạo Lô Hàng</Text>
-          <View style={styles.newBadge}><Text style={styles.newText}>Mới</Text></View>
-          <Icon name="chevron-right" size={24} color="#FFCC00" />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuItem}>
-          <Icon name="phone" size={24} color="#FFCC00" />
-          <Text style={styles.menuText}>Gọi Để Gửi Hàng</Text>
-          <Icon name="headset-mic" size={24} color="#FFCC00" style={styles.supportIcon} />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.footerItem}>
-          <Icon name="home" size={24} color="#FFCC00" />
-          <Text style={styles.footerText}>Trang Chủ</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.footerItem}>
-          <Icon name="assignment-return" size={24} color="#FFCC00" />
-          <Text style={styles.footerText}>Hàng nhận</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.footerItem}>
-          <Icon name="delivery-dining" size={24} color="#FFCC00" />
-          <Text style={styles.footerText}>Hàng gửi</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.footerItem}>
-          <Icon name="place" size={24} color="#FFCC00" />
-          <Text style={styles.footerText}>Điểm Dịch Vụ</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.footerItem}>
+            <Icon name="home" size={24} color="orange" />
+            <Text style={styles.footerText}>Trang Chủ</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.footerItem}>
+            <Icon name="assignment-return" size={24} color="orange" />
+            <Text style={styles.footerText}>Hàng nhận</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.footerItem}>
+            <Icon name="local-shipping" size={24} color="orange" />
+            <Text style={styles.footerText}>Hàng gửi</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.footerItem} onPress={() => navigation.navigate('Location')}>
+            <Icon name="place" size={24} color="orange" />
+            <Text style={styles.footerText}>Điểm Dịch Vụ</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 };
 const styles = StyleSheet.create({
@@ -108,7 +210,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    marginTop: -20,
+    marginTop: 0,
     padding: 20,
   },
   greeting: {
@@ -154,7 +256,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   loginButton: {
-    color: '#FFCC00',
+    color: 'orange',
     marginLeft: 20,
     fontSize: 16,
   },
@@ -197,6 +299,48 @@ const styles = StyleSheet.create({
     color: '#FFCC00',
     fontSize: 12,
   },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    position: 'absolute',
+    left: 0,
+    top: 70,
+    bottom: 30,
+    width: width * 0.75,
+    height: height,
+    backgroundColor: 'grey',
+    paddingTop: 50,
+    paddingHorizontal: 20,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    borderTopRightRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+  },
+  modalButton: {
+    marginVertical: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#FFCC00',
+    borderRadius: 10,
+    width: '100%',
+  },
+  modalText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+    textAlign: 'center',
+  },
+  footerTextModal: {
+    width: '100%',
+    height: 30,
+    backgroundColor: 'yellow',
+  },
 });
-
 export default HomePage;
