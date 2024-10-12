@@ -3,16 +3,13 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, TouchableWithoutFe
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 const LoginScreen = () => {
   const navigation = useNavigation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
-
   const handleLogin = async () => {
     if (!username || !password) {
       Alert.alert('Lỗi', 'Vui lòng nhập tên đăng nhập và mật khẩu.');
@@ -34,7 +31,7 @@ const LoginScreen = () => {
           await AsyncStorage.setItem('isLoggedIn', 'true'); // Lưu trạng thái đăng nhập
           await AsyncStorage.setItem('username', employeeUsername); // Lưu tên người dùng
           await AsyncStorage.setItem('employee_id', employeeId); // Lưu employee_id
-          await AsyncStorage.setItem('userRole', 'employee'); // Lưu employee
+          await AsyncStorage.setItem('userRole', 'employee'); // Lưu employee_id
           Alert.alert('Thành công', `Xin chào, ${employeeUsername}! Bạn đã đăng nhập thành công với vai trò Shipper.`);
           navigation.navigate('ShipPage'); // Chuyển hướng đến trang ShipPage
         } else {
@@ -72,7 +69,6 @@ const LoginScreen = () => {
       Alert.alert('Lỗi', 'Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau.');
     }
   };
-
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
@@ -92,6 +88,10 @@ const LoginScreen = () => {
         />
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Đăng nhập</Text>
+        </TouchableOpacity>
+        {/* Google Login Button */}
+        <TouchableOpacity style={[styles.button, styles.googleButton]} onPress={()=>navigation.navigate('SignInWithGoogle')}>
+          <Text style={styles.buttonText}>Đăng nhập bằng Google</Text>
         </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
@@ -157,6 +157,12 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 12,
     fontWeight: 'bold',
+  },
+  googleButton: {
+    backgroundColor: '#db4a39', // Google brand color
+  },
+  facebookButton: {
+    backgroundColor: '#3b5998', // Facebook brand color
   }
 });
 

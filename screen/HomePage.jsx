@@ -250,12 +250,6 @@ const HomePage = () => {
       }).start();
     }
   }, [modalVisible]);
-
-  // const handleLogout = async () => {
-  //   await AsyncStorage.removeItem('customer_name'); // Xóa username khi đăng xuất
-  //   setUsername('');
-  //   Alert.alert('Đăng xuất thành công');
-  // };
   const handleLogout = async () => {
     try {
       // Xóa token và username khỏi AsyncStorage
@@ -265,7 +259,7 @@ const HomePage = () => {
       // Điều hướng về màn hình đăng nhập
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Login' }], // Đảm bảo người dùng không quay lại ShipPage
+        routes: [{ name: 'HomePage' }], // Đảm bảo người dùng không quay lại ShipPage
       });
     } catch (error) {
       console.error('Lỗi khi đăng xuất:', error);
