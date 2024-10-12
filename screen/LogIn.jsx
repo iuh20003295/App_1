@@ -1,7 +1,8 @@
-import React, { useRef, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard,Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons'; 
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -11,45 +12,84 @@ const LoginScreen = () => {
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
-  const handleLogin = () => {
-    if (username === 'admin' && password === '123') {
-      navigation.navigate('HomePage');
-    }else if
-      (username === 'shipper' && password === '123') {
-        navigation.navigate('ShipPage');
-    } 
-    else {
-      Alert.alert('Lỗi', 'Tên đăng nhập hoặc mật khẩu không đúng');
+
+  const handleLogin = async () => {
+    if (!username || !password) {
+      Alert.alert('Lỗi', 'Vui lòng nhập tên đăng nhập và mật khẩu.');
+      return;
+    }
+
+    try {
+      // Đăng nhập nhân viên
+      const employeeResponse = await axios.post('https://qship.pro.vn/API_QSHIP/auth/authenticateForEmployee.php', {
+        userPhone: username,
+        userPassword: password
+      });
+      if (employeeResponse.data && employeeResponse.data.token) {
+        const { roles, username: employeeUsername, id: employeeId } = employeeResponse.data;
+
+        if (roles === 'shipper') {
+          // Chỉ nhận roles "shipper"
+          await AsyncStorage.setItem('jwt_token', employeeResponse.data.token); // Lưu token
+          await AsyncStorage.setItem('isLoggedIn', 'true'); // Lưu trạng thái đăng nhập
+          await AsyncStorage.setItem('username', employeeUsername); // Lưu tên người dùng
+          await AsyncStorage.setItem('employee_id', employeeId); // Lưu employee_id
+          await AsyncStorage.setItem('userRole', 'employee'); // Lưu employee
+          Alert.alert('Thành công', `Xin chào, ${employeeUsername}! Bạn đã đăng nhập thành công với vai trò Shipper.`);
+          navigation.navigate('ShipPage'); // Chuyển hướng đến trang ShipPage
+        } else {
+          Alert.alert('Lỗi', 'Chỉ tài khoản Shipper được phép đăng nhập.');
+        }
+        return;
+      }
+    } catch (error) {
+      console.log("Đăng nhập phân quyền khách hàng");
+    }
+
+
+    // Nếu không thành công với tài khoản nhân viên, thử đăng nhập tài khoản khách hàng
+    try {
+      const customerResponse = await axios.post('https://qship.pro.vn/API_QSHIP/auth/authenticate.php', {
+        userPhone: username,
+        userPassword: password
+      });
+  
+      if (customerResponse.data && customerResponse.data.token) {
+        const { username: customerName, id: customerId } = customerResponse.data;
+        await AsyncStorage.setItem('jwt_token', customerResponse.data.token); // Lưu token
+        await AsyncStorage.setItem('isLoggedIn', 'true'); // Lưu trạng thái đăng nhập
+        await AsyncStorage.setItem('customer_name', customerName); // Lưu tên khách hàng
+        await AsyncStorage.setItem('customer_id', customerId); // Lưu customer_id
+        await AsyncStorage.setItem('userRole', 'customer'); // Lưu customer
+
+        Alert.alert('Thành công', `Xin chào, ${customerName}! Đăng nhập khách hàng thành công.`);
+        navigation.navigate('HomePage'); // Điều hướng đến HomePage
+      } else {
+        Alert.alert('Lỗi', 'Sai thông tin đăng nhập hoặc phản hồi từ máy chủ không hợp lệ.');
+      }
+    } catch (error) {
+      console.error('Lỗi trong quá trình đăng nhập:', error.response ? error.response.data : error.message);
+      Alert.alert('Lỗi', 'Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại sau.');
     }
   };
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
         <Text style={styles.header}>ĐĂNG NHẬP</Text>
-        <TextInput 
-          value ={username}
+        <TextInput
+          value={username}
           onChangeText={setUsername}
-          placeholder="Tên đăng nhập" 
-          style={styles.input} 
+          placeholder="Tên đăng nhập"
+          style={styles.input}
         />
-        <TextInput 
-          value ={password}
+        <TextInput
+          value={password}
           onChangeText={setPassword}
-          placeholder="Mật khẩu" 
-          style={styles.input} 
-          secureTextEntry={true} 
+          placeholder="Mật khẩu"
+          style={styles.input}
+          secureTextEntry={true}
         />
-        <TouchableOpacity onPress={() => navigation.navigate('ForgotPass')}>
-          <Text style={styles.link}>Quên mật khẩu</Text>
-        </TouchableOpacity>
-        <Text style={styles.text}>Bạn chưa có tài khoản?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-          <Text style={styles.link}>Đăng ký</Text>
-        </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Đăng nhập</Text>
         </TouchableOpacity>
@@ -57,7 +97,6 @@ const LoginScreen = () => {
     </TouchableWithoutFeedback>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

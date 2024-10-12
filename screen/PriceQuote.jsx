@@ -1,147 +1,186 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  TextInput,
+  Button,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
 
 const PriceQuote = () => {
+  const [startAddress, setStartAddress] = useState('');
+  const [endAddress, setEndAddress] = useState('');
+  const [startCoords, setStartCoords] = useState(null);
+  const [endCoords, setEndCoords] = useState(null);
+  const [shippingMethod, setShippingMethod] = useState('');
+  const [weight, setWeight] = useState('');
+  const [distance, setDistance] = useState(0);
+  const [cost, setCost] = useState(0);
+  const [suggestionsStart, setSuggestionsStart] = useState([]);
+  const [suggestionsEnd, setSuggestionsEnd] = useState([]);
+
+  const apiKey = 'JcbY4XTk4jIoN83asoodeHWyIKEvjbnsvmVe2I5y';
+
+  const getGeocode = async (address, setCoords, setSuggestions) => {
+    try {
+      const response = await fetch(
+        `https://rsapi.goong.io/geocode?address=${encodeURIComponent(address)}&api_key=${apiKey}`
+      );
+      const data = await response.json();
+      const results = data.results;
+
+      if (results && results.length > 0) {
+        setCoords(results[0].geometry.location);
+        setSuggestions(results.map((result) => result.formatted_address));
+      } else {
+        setSuggestions([]); // Clear suggestions if no results
+      }
+    } catch (error) {
+      console.error('Geocoding failed:', error);
+    }
+  };
+
+  const getRoute = async (start, end) => {
+    try {
+      const response = await fetch(
+        `https://rsapi.goong.io/Direction?origin=${start.lat},${start.lng}&destination=${end.lat},${end.lng}&vehicle=car&api_key=${apiKey}`
+      );
+      const data = await response.json();
+      return data.routes[0].legs[0].distance.value; // distance in meters
+    } catch (error) {
+      console.error('Route calculation failed:', error);
+    }
+  };
+
+  const calculateShippingCost = (weight, distance) => {
+    const pricePerKm = 10000; // Example: 10,000 VND per km
+    return (distance / 1000) * pricePerKm; // Convert meters to km
+  };
+
+  const handleCalculate = async () => {
+    if (!startCoords || !endCoords) {
+      Alert.alert('Error', 'Please provide valid start and end addresses.');
+      return;
+    }
+
+    const distance = await getRoute(startCoords, endCoords);
+    const shippingCost = calculateShippingCost(weight, distance);
+    setDistance(distance);
+    setCost(shippingCost);
+  };
+
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>BÁO GIÁ PHÍ VẬN CHUYỂN</Text>
-        <Text style={styles.subTitle}>Đơn vị tính: VNĐ (đã bao gồm VAT 10%)</Text>
-      </View>
+    <View style={styles.container}>
+      <ScrollView style={styles.controls}>
+        <Text>Địa chỉ gửi:</Text>
+        <TextInput
+          style={styles.input}
+          value={startAddress}
+          onChangeText={text => {
+            setStartAddress(text);
+            getGeocode(text, setStartCoords, setSuggestionsStart);
+          }}
+          placeholder="Nhập địa điểm gửi"
+        />
+        {suggestionsStart.map((suggestion, index) => (
+          <TouchableOpacity 
+            key={index} 
+            onPress={() => {
+              setStartAddress(suggestion);
+              setSuggestionsStart([]); // Clear suggestions on selection
+              getGeocode(suggestion, setStartCoords, () => {}); // Optionally get coordinates
+            }}>
+            <Text style={styles.suggestion}>{suggestion}</Text>
+          </TouchableOpacity>
+        ))}
 
-      <View style={styles.table}>
-        <View style={styles.row}>
-          <Text style={[styles.th, styles.firstColumn]}></Text>
-          <Text style={[styles.th, styles.doubleColumn]}>Vùng</Text>
-          <Text style={[styles.th, styles.doubleColumn]}>Tỉnh giao</Text>
-          <Text style={[styles.th, styles.doubleColumn]}>Quận huyện giao</Text>
-          <Text style={styles.th}>Thời gian giao</Text>
-        </View>
+        <Text>Địa chỉ nhận:</Text>
+        <TextInput
+          style={styles.input}
+          value={endAddress}
+          onChangeText={text => {
+            setEndAddress(text);
+            getGeocode(text, setEndCoords, setSuggestionsEnd);
+          }}
+          placeholder="Nhập địa điểm nhận"
+        />
+        {suggestionsEnd.map((suggestion, index) => (
+          <TouchableOpacity 
+            key={index} 
+            onPress={() => {
+              setEndAddress(suggestion);
+              setSuggestionsEnd([]); // Clear suggestions on selection
+              getGeocode(suggestion, setEndCoords, () => {}); // Optionally get coordinates
+            }}>
+            <Text style={styles.suggestion}>{suggestion}</Text>
+          </TouchableOpacity>
+        ))}
 
-        <View style={styles.row}>
-          <Text style={[styles.thHighlight, styles.firstColumn]}>Hình thức vận chuyển</Text>
-          <Text style={styles.td}>Cùng vùng</Text>
-          <Text style={styles.td}>Khác vùng</Text>
-          <Text style={styles.td}>Cùng tỉnh</Text>
-          <Text style={styles.td}>Khác tỉnh</Text>
-          <Text style={styles.td}>Cùng quận/huyện</Text>
-          <Text style={styles.td}>Khác quận/huyện</Text>
-          <Text style={styles.td}>1-6 ngày</Text>
-        </View>
+        <Text>Khối lượng (KG):</Text>
+        <TextInput
+          style={styles.input}
+          value={weight}
+          onChangeText={setWeight}
+          placeholder="Nhập khối lượng"
+          keyboardType="numeric"
+        />
 
-        <View style={styles.row}>
-          <Text style={[styles.thHighlight, styles.firstColumn]}>Giao hàng tiết kiệm</Text>
-          <Text style={styles.td}>+4.000</Text>
-          <Text style={styles.td}>+24.000</Text>
-          <Text style={styles.td}>+4.000</Text>
-          <Text style={styles.td}>+34.000</Text>
-          <Text style={styles.td}>+4.000</Text>
-          <Text style={styles.td}>+14.000</Text>
-          <Text style={styles.td}>2-6 ngày</Text>
-        </View>
+        <Text>Hình thức vận chuyển:</Text>
+        <RNPickerSelect
+          onValueChange={value => setShippingMethod(value)}
+          items={[
+            { label: 'Giao hàng nhanh', value: 'GHN' },
+            { label: 'Giao hàng tiết kiệm', value: 'GHTK' },
+          ]}
+        />
 
-        <View style={styles.row}>
-          <Text style={[styles.thHighlight, styles.firstColumn]}>Giao hàng nhanh</Text>
-          <Text style={styles.td}>+12.000</Text>
-          <Text style={styles.td}>+32.000</Text>
-          <Text style={styles.td}>+12.000</Text>
-          <Text style={styles.td}>+42.000</Text>
-          <Text style={styles.td}>+12.000</Text>
-          <Text style={styles.td}>+22.000</Text>
-          <Text style={styles.td}>1-2 ngày</Text>
-        </View>
+        <Button title="TÍNH CƯỚC VẬN CHUYỂN" onPress={handleCalculate} />
 
-        <View style={styles.row}>
-          <Text style={[styles.thHighlight, styles.firstColumn]}>Khối lượng mỗi 0.5KG</Text>
-          <Text style={styles.td}>+2.500</Text>
-          <Text style={styles.td}>+2.500</Text>
-          <Text style={styles.td}>+2.500</Text>
-          <Text style={styles.td}>+2.500</Text>
-          <Text style={styles.td}>+2.500</Text>
-          <Text style={styles.td}>+2.500</Text>
-          <Text style={styles.td}></Text>
-        </View>
-
-        <View style={styles.row}>
-          <Text style={[styles.thHighlight, styles.firstColumn]}>Phí vận chuyển cơ bản</Text>
-          <Text style={styles.td}>+5.000</Text>
-          <Text style={styles.td}>+5.000</Text>
-          <Text style={styles.td}>+5.000</Text>
-          <Text style={styles.td}>+5.000</Text>
-          <Text style={styles.td}>+5.000</Text>
-          <Text style={styles.td}>+5.000</Text>
-          <Text style={styles.td}></Text>
-        </View>
-      </View>
-    </ScrollView>
+        {distance > 0 && (
+          <Text style={styles.result}>
+            Khoảng cách: {(distance / 1000).toFixed(2)} km
+          </Text>
+        )}
+        {cost > 0 && (
+          <Text style={styles.result}>
+            Tổng phí dự kiến: {cost.toLocaleString('en-GB')} VND
+          </Text>
+        )}
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f7fff4',
-    padding: 15,
+    marginTop: 50,
   },
-  header: {
-    alignItems: 'center',
-    marginBottom: 20,
+  controls: {
+    padding: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#007bff',
-    textAlign: 'center',
-    marginVertical: 10,
-  },
-  subTitle: {
-    fontSize: 16,
-    fontStyle: 'italic',
-    color: '#6c757d',
-    textAlign: 'center',
-  },
-  table: {
+  input: {
     borderWidth: 1,
-    borderColor: '#007bff',
-    borderRadius: 8,
-    overflow: 'hidden',
-    marginVertical: 20,
+    borderColor: '#ccc',
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 5,
   },
-  row: {
-    flexDirection: 'row',
+  suggestion: {
+    padding: 10,
+    backgroundColor: '#f0f0f0',
     borderBottomWidth: 1,
-    borderColor: '#007bff',
+    borderColor: '#ccc',
   },
-  th: {
-    flex: 1,
-    padding: 12,
-    backgroundColor: '#e9ecef',
-    textAlign: 'center',
+  result: {
+    marginTop: 10,
+    fontSize: 18,
     fontWeight: 'bold',
-    fontSize: 14,
-    color: '#495057',
-  },
-  thHighlight: {
-    flex: 1,
-    padding: 12,
-    backgroundColor: '#ffc107',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 14,
-    color: '#495057',
-  },
-  td: {
-    flex: 1,
-    padding: 12,
-    textAlign: 'center',
-    fontSize: 14,
-    color: '#212529',
-  },
-  firstColumn: {
-    flex: 2,
-  },
-  doubleColumn: {
-    flex: 2,
   },
 });
 
