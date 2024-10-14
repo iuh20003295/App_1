@@ -188,6 +188,13 @@ const ShipPage = () => {
 
             <TouchableOpacity style={styles.modalButton} onPress={() => {
               toggleModal();
+              navigation.navigate('ReceiveOrders');
+            }}>
+              <Text style={styles.modalText}>Nhận đơn hàng</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.modalButton} onPress={() => {
+              toggleModal();
               navigation.navigate('Directions');
             }}>
               <Text style={styles.modalText}>Dò đường</Text>

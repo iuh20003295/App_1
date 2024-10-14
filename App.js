@@ -144,6 +144,7 @@ import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
 import { GoogleAuthProvider, onAuthStateChanged, signInWithCredential } from 'firebase/auth';
 import { auth } from "./firebaseConfig";
+import ReceiveOrders from './shipper/ReceiveOrders';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -222,6 +223,8 @@ const App = () => {
         <Stack.Screen name="AccountShip" component={AccountShip} />
         <Stack.Screen name="OrderShip" component={OrderShip} />
         <Stack.Screen name="Directions" component={Directions} />
+        <Stack.Screen name="ReceiveOrders" component={ReceiveOrders} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
