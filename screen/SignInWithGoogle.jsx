@@ -19,16 +19,16 @@ export default function SignInWithGoogle({ promptAsync, response }) {
       // Đăng nhập Firebase với credential từ Google
       signInWithCredential(auth, credential).then(async (userCredential) => {
         // Lấy thông tin người dùng sau khi đăng nhập
-        const { displayName } = userCredential.user;
+        const { displayName, email } = userCredential.user;
         // Lưu trạng thái đăng nhập
         await AsyncStorage.setItem('isLoggedIn', 'true');
         await AsyncStorage.setItem('userRole', 'customer'); // Ví dụ lưu vai trò người dùng
         await AsyncStorage.setItem('customer_name', displayName); // Lưu tên người dùng
+        await AsyncStorage.setItem('email', email); // Lưu tên người dùng
         await AsyncStorage.setItem('token', id_token); // Lưu token
-
-
         // Điều hướng sang HomePage
         navigation.replace('HomePage');
+        console.log("Bạn đang đăng nhập với Google bằng email:",email);
       }).catch((error) => {
         console.log("Lỗi khi đăng nhập với Google:", error);
       });

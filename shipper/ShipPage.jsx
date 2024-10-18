@@ -86,11 +86,14 @@ const ShipPage = () => {
       // Xóa token và username khỏi AsyncStorage
       await AsyncStorage.removeItem('token');
       await AsyncStorage.removeItem('username');
-
+      await AsyncStorage.removeItem('jwt_token');
+      await AsyncStorage.setItem('isLoggedIn', 'false'); 
+      await AsyncStorage.removeItem('employee_id');
+      await AsyncStorage.removeItem('userRole');
       // Điều hướng về màn hình đăng nhập
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Login' }], // Đảm bảo người dùng không quay lại ShipPage
+        routes: [{ name: 'Login' }], 
       });
     } catch (error) {
       console.error('Lỗi khi đăng xuất:', error);
@@ -188,9 +191,16 @@ const ShipPage = () => {
 
             <TouchableOpacity style={styles.modalButton} onPress={() => {
               toggleModal();
+              navigation.navigate('GetOrders');
+            }}>
+              <Text style={styles.modalText}>Lấy hàng</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.modalButton} onPress={() => {
+              toggleModal();
               navigation.navigate('ReceiveOrders');
             }}>
-              <Text style={styles.modalText}>Nhận đơn hàng</Text>
+              <Text style={styles.modalText}>Nhận hàng</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.modalButton} onPress={() => {
@@ -448,6 +458,11 @@ const styles = StyleSheet.create({
   filterText: {
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  usernameText:{
+    fontWeight:'bold',
+    fontSize: 20,
+    color: '#2B124C'
   },
 });
 

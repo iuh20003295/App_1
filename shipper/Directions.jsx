@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import RNPickerSelect from 'react-native-picker-select';
+import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const Directions = () => {
+  const navigation = useNavigation();
   const [startAddress, setStartAddress] = useState('');
   const [endAddress, setEndAddress] = useState('');
   const [startCoords, setStartCoords] = useState(null);
@@ -115,6 +118,9 @@ const Directions = () => {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Icon name="arrow-back" size={30} color="black" />
+      </TouchableOpacity>
       <MapView
         style={styles.map}
         region={region}
@@ -210,9 +216,12 @@ const Directions = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 50,
   },
   map: {
     flex: 1,
+    width: '100%',
+    height:'100%',
   },
   controls: {
     position: 'absolute',
@@ -239,6 +248,12 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderColor: '#ccc',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 35,
+    left: 10,
+    zIndex: 1,
   },
 });
 

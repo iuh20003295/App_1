@@ -3,10 +3,27 @@ import { StyleSheet, View, SafeAreaView, Text, Image, ActivityIndicator } from '
 
 const SplashScreen = ({ navigation }) => {
   useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const loggedIn = await AsyncStorage.getItem('isLoggedIn'); 
+        if (loggedIn === 'true') {
+          // Nếu đã đăng nhập thì điều hướng đến trang HomePage hoặc ShipPage
+          const userRole = await AsyncStorage.getItem('userRole');
+          navigation.replace(userRole === 'employee' ? 'ShipPage' : 'HomePage');
+        } else {
+          // Nếu chưa đăng nhập thì điều hướng đến màn hình Main
+          navigation.replace('Main');
+        }
+      } catch (error) {
+        // Trong trường hợp có lỗi, chuyển đến màn hình Main
+        navigation.replace('Main');
+      }
+    };
+
     setTimeout(() => {
-      navigation.replace('Main'); //3 giây
+      checkLoginStatus(); // Gọi hàm kiểm tra đăng nhập sau 3 giây
     }, 3000);
-  }, []);
+  }, [navigation]);
 
   return (
     <SafeAreaView style={styles.container}>

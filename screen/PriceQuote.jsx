@@ -22,6 +22,7 @@ const PriceQuote = () => {
   const [cost, setCost] = useState(0);
   const [suggestionsStart, setSuggestionsStart] = useState([]);
   const [suggestionsEnd, setSuggestionsEnd] = useState([]);
+  const [estimatedDays, setEstimatedDays] = useState(0);
 
   const apiKey = 'JcbY4XTk4jIoN83asoodeHWyIKEvjbnsvmVe2I5y';
 
@@ -71,117 +72,137 @@ const PriceQuote = () => {
     const shippingCost = calculateShippingCost(weight, distance);
     setDistance(distance);
     setCost(shippingCost);
+    let days = 0;
+    if (distance > 1500000) { // Hơn 1500km
+      days = 3;
+    } else if (distance > 80000 && distance <= 1500000) { // Từ 80km đến 1500km
+      days = 2;
+    } else if (distance <= 80000) { // Dưới 80km
+      days = 1;
+    }
+
+    // Nếu chọn Giao hàng tiết kiệm, cộng thêm 1 ngày
+    if (shippingMethod === 'GHTK') {
+      days += 1;
+    }
+    setEstimatedDays(days);
+  };
+    return (
+      <View style={styles.container}>
+        <ScrollView style={styles.controls}>
+          <Text>Địa chỉ gửi:</Text>
+          <TextInput
+            style={styles.input}
+            value={startAddress}
+            onChangeText={text => {
+              setStartAddress(text);
+              getGeocode(text, setStartCoords, setSuggestionsStart);
+            }}
+            placeholder="Nhập địa điểm gửi"
+          />
+          {suggestionsStart.map((suggestion, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => {
+                setStartAddress(suggestion);
+                setSuggestionsStart([]); // Clear suggestions on selection
+                getGeocode(suggestion, setStartCoords, () => { }); // Optionally get coordinates
+              }}>
+              <Text style={styles.suggestion}>{suggestion}</Text>
+            </TouchableOpacity>
+          ))}
+
+          <Text>Địa chỉ nhận:</Text>
+          <TextInput
+            style={styles.input}
+            value={endAddress}
+            onChangeText={text => {
+              setEndAddress(text);
+              getGeocode(text, setEndCoords, setSuggestionsEnd);
+            }}
+            placeholder="Nhập địa điểm nhận"
+          />
+          {suggestionsEnd.map((suggestion, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => {
+                setEndAddress(suggestion);
+                setSuggestionsEnd([]); // Clear suggestions on selection
+                getGeocode(suggestion, setEndCoords, () => { }); // Optionally get coordinates
+              }}>
+              <Text style={styles.suggestion}>{suggestion}</Text>
+            </TouchableOpacity>
+          ))}
+
+          <Text>Khối lượng (KG):</Text>
+          <TextInput
+            style={styles.input}
+            value={weight}
+            onChangeText={setWeight}
+            placeholder="Nhập khối lượng"
+            keyboardType="numeric"
+          />
+
+          <Text>Hình thức vận chuyển:</Text>
+          <RNPickerSelect
+            onValueChange={value => setShippingMethod(value)}
+            items={[
+              { label: 'Giao hàng nhanh', value: 'GHN' },
+              { label: 'Giao hàng tiết kiệm', value: 'GHTK' },
+            ]}
+          />
+
+          <Button title="TÍNH CƯỚC VẬN CHUYỂN" onPress={handleCalculate} />
+
+          {distance > 0 && (
+            <Text style={styles.result}>
+              Khoảng cách: {(distance / 1000).toFixed(2)} km
+            </Text>
+          )}
+
+          {estimatedDays > 0 && (
+            <Text style={styles.result}>
+              Dự kiến thời gian giao hàng: {estimatedDays} ngày
+            </Text>
+          )}
+
+          {cost > 0 && (
+            <Text style={styles.result}>
+              Tổng phí dự kiến: {cost.toLocaleString('en-GB')} VND
+            </Text>
+          )}
+        </ScrollView>
+      </View>
+    );
   };
 
-  return (
-    <View style={styles.container}>
-      <ScrollView style={styles.controls}>
-        <Text>Địa chỉ gửi:</Text>
-        <TextInput
-          style={styles.input}
-          value={startAddress}
-          onChangeText={text => {
-            setStartAddress(text);
-            getGeocode(text, setStartCoords, setSuggestionsStart);
-          }}
-          placeholder="Nhập địa điểm gửi"
-        />
-        {suggestionsStart.map((suggestion, index) => (
-          <TouchableOpacity 
-            key={index} 
-            onPress={() => {
-              setStartAddress(suggestion);
-              setSuggestionsStart([]); // Clear suggestions on selection
-              getGeocode(suggestion, setStartCoords, () => {}); // Optionally get coordinates
-            }}>
-            <Text style={styles.suggestion}>{suggestion}</Text>
-          </TouchableOpacity>
-        ))}
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      marginTop: 50,
+    },
+    controls: {
+      padding: 10,
+      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: '#ccc',
+      padding: 10,
+      marginBottom: 10,
+      borderRadius: 5,
+    },
+    suggestion: {
+      padding: 10,
+      backgroundColor: '#f0f0f0',
+      borderBottomWidth: 1,
+      borderColor: '#ccc',
+    },
+    result: {
+      marginTop: 10,
+      fontSize: 18,
+      fontWeight: 'bold',
+    },
+  });
 
-        <Text>Địa chỉ nhận:</Text>
-        <TextInput
-          style={styles.input}
-          value={endAddress}
-          onChangeText={text => {
-            setEndAddress(text);
-            getGeocode(text, setEndCoords, setSuggestionsEnd);
-          }}
-          placeholder="Nhập địa điểm nhận"
-        />
-        {suggestionsEnd.map((suggestion, index) => (
-          <TouchableOpacity 
-            key={index} 
-            onPress={() => {
-              setEndAddress(suggestion);
-              setSuggestionsEnd([]); // Clear suggestions on selection
-              getGeocode(suggestion, setEndCoords, () => {}); // Optionally get coordinates
-            }}>
-            <Text style={styles.suggestion}>{suggestion}</Text>
-          </TouchableOpacity>
-        ))}
-
-        <Text>Khối lượng (KG):</Text>
-        <TextInput
-          style={styles.input}
-          value={weight}
-          onChangeText={setWeight}
-          placeholder="Nhập khối lượng"
-          keyboardType="numeric"
-        />
-
-        <Text>Hình thức vận chuyển:</Text>
-        <RNPickerSelect
-          onValueChange={value => setShippingMethod(value)}
-          items={[
-            { label: 'Giao hàng nhanh', value: 'GHN' },
-            { label: 'Giao hàng tiết kiệm', value: 'GHTK' },
-          ]}
-        />
-
-        <Button title="TÍNH CƯỚC VẬN CHUYỂN" onPress={handleCalculate} />
-
-        {distance > 0 && (
-          <Text style={styles.result}>
-            Khoảng cách: {(distance / 1000).toFixed(2)} km
-          </Text>
-        )}
-        {cost > 0 && (
-          <Text style={styles.result}>
-            Tổng phí dự kiến: {cost.toLocaleString('en-GB')} VND
-          </Text>
-        )}
-      </ScrollView>
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 50,
-  },
-  controls: {
-    padding: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    marginBottom: 10,
-    borderRadius: 5,
-  },
-  suggestion: {
-    padding: 10,
-    backgroundColor: '#f0f0f0',
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-  },
-  result: {
-    marginTop: 10,
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});
-
-export default PriceQuote;
+  export default PriceQuote;

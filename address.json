@@ -1,0 +1,266 @@
+[
+        {
+            "description": "Bưu cục Hà Nội",
+            "coordinates": [105.8300735, 21.0116593]
+        },
+        {
+            "description": "Bưu cục Đà Nẵng",
+            "coordinates": [108.23531671300009, 16.049613693000026]
+        },
+        {
+            "description": "Bưu cục Trường Sa Hồ Chí Minh",
+            "coordinates": [106.67295982700006, 10.78752957000006]
+        },
+        {
+            "description": "Bưu cục Nguyễn Kiệm Hồ Chí Minh",
+            "coordinates": [106.67880763400007, 10.82262279300005]
+        },
+        {
+            "description": "Bưu cục Nhất Chi Mai Hồ Chí Minh",
+            "coordinates": [106.63991424000005, 10.802939988000048]
+        },
+        {
+            "description": "Bưu cục Tam Phú Thủ Đức Hồ Chí Minh",
+            "coordinates": [106.73932825500003, 10.86073224100005]
+        },
+        {
+            "description": "Bưu cục Cố Giang Quận 1 Hồ Chí Minh",
+            "coordinates": [106.69376031300004, 10.759978003000072]
+        },
+        {
+            "description": "Bưu cục An Giang",
+            "coordinates": [105.4465086, 10.3642975]
+        },
+        {
+            "description": "Bưu cục Bà Rịa - Vũng Tàu",
+            "coordinates": [107.17505847600006, 10.494766198000036]
+        },
+        {
+            "description": "Bưu cục Bắc Giang",
+            "coordinates": [106.21788253900007, 21.286791437000034]
+        },
+        {
+            "description": "Bưu cục Bắc Kạn",
+            "coordinates": [105.83513569700006, 22.142392786000073]
+        },
+        {
+            "description": "Bưu cục Bạc Liêu",
+            "coordinates": [105.7244453, 9.2824272]
+        },
+        {
+            "description": "Bưu cục Bắc Ninh",
+            "coordinates": [106.00305957900008, 21.13550953300006]
+        },
+        {
+            "description": "Bưu cục Quảng Trị",
+            "coordinates": [107.11261510700007, 16.813292661000048]
+        },
+        {
+            "description": "Bưu cục Huế",
+            "coordinates": [107.6048336, 16.4505621]
+        },
+        {
+            "description": "Bưu cục Quảng Bình",
+            "coordinates": [105.96750000000009, 17.81516700000003]
+        },
+        {
+            "description": "Bưu cục Nghệ An",
+            "coordinates": [105.69701824600008, 18.68647647000006]
+        },
+        {
+            "description": "Bưu cục Hà Tĩnh",
+            "coordinates": [105.85769000000005, 18.372370000000046]
+        },
+        {
+            "description": "Bưu cục Thanh Hóa",
+            "coordinates": [105.37841209100009, 20.082894244000045]
+        },
+        {
+            "description": "Bưu cục Quảng Nam",
+            "coordinates": [107.7933692, 15.4405906]
+        },
+        {
+            "description": "Bưu cục Quảng Ngãi",
+            "coordinates": [108.7930599, 15.1121077]
+        },{
+            "description": "Bưu cục Bình Định",
+            "coordinates": [109.22584250000006, 13.78348333300005]
+        },
+        {
+            "description": "Bưu cục Phú Yên",
+            "coordinates": [109.30345742200006, 13.087885675000052]
+        },
+        {
+            "description": "Bưu cục Khánh Hòa",
+            "coordinates": [109.19172024300008, 12.247626841000056]
+        },
+        {
+            "description": "Bưu cục Ninh Thuận",
+            "coordinates": [108.968606, 11.5862252]
+        },
+        {
+            "description": "Bưu cục Bình Thuận",
+            "coordinates": [107.73061480000007, 11.106944400000032]
+        },
+        {
+            "description": "Bưu cục Gia Lai",
+            "coordinates": [108.00361388900006, 13.984992500000033]
+        },
+        {
+            "description": "Bưu cục Đắk Lắk",
+            "coordinates": [108.0185756, 12.6867648]
+        },{
+            "description": "Bưu cục Đắk Nông",
+            "coordinates": [107.6341816, 12.4561542]
+        },
+        {
+            "description": "Bưu cục Lâm Đồng",
+            "coordinates": [107.8063959, 11.5835822]
+        },
+        {
+            "description": "Bưu cục Bình Phước",
+            "coordinates": [106.87721661200004, 11.530129239000075]
+        },
+        {
+            "description": "Bưu cục Bến Tre",
+            "coordinates": [106.32628748095352, 10.114092594080915]
+        },
+        {
+            "description": "Bưu cục Cà Mau",
+            "coordinates": [105.15439972200005, 9.170955556000024]
+        },
+        {
+            "description": "Bưu cục Cần Thơ",
+            "coordinates": [105.4982787, 10.0794294]
+        },
+        {
+            "description": "Bưu cục Đồng Tháp",
+            "coordinates": [105.7600818, 10.3000018]
+        },
+        {
+            "description": "Bưu cục Hậu Giang",
+            "coordinates": [105.82053800000006, 9.815230529000075]
+        },
+        {
+            "description": "Bưu cục Kiên Giang",
+            "coordinates": [105.0974012, 9.9806976]
+        },
+        {
+            "description": "Bưu cục Long An",
+            "coordinates": [106.4855837, 10.6392824]
+        },
+        {
+            "description": "Bưu cục Sóc Trăng",
+            "coordinates": [105.97146923200006, 9.594799082000065]
+        },
+        {
+            "description": "Bưu cục Mỹ Tho Tiền Giang",
+            "coordinates": [106.34265522800007, 10.36343683900003]
+        },
+        {
+            "description": "Bưu cục Trà Vinh",
+            "coordinates": [106.3475017, 9.9376776]
+        },
+        {
+            "description": "Bưu cục Vĩnh Long",
+            "coordinates": [105.9704519, 10.2339446]
+        },
+        {
+            "description": "Bưu cục Kon Tum",
+            "coordinates": [107.993451, 14.3674843]
+        },
+        {
+            "description": "Bưu cục Bình Dương",
+            "coordinates": [106.67192201800003, 10.98120553800004]
+        },
+        {
+            "description": "Bưu cục Đồng Nai",
+            "coordinates": [107.0062305, 10.9544318]
+        },
+        {
+            "description": "Bưu cục Tây Ninh",
+            "coordinates": [106.1043763, 11.2984845]
+        },
+        {
+            "description": "Bưu cục Hòa Bình",
+            "coordinates": [105.3350215, 20.8419548]
+        },
+        {
+            "description": "Bưu cục Sơn La",
+            "coordinates": [103.927762, 21.3102041]
+        },
+        {
+            "description": "Bưu cục Điện Biên",
+            "coordinates": [103.0940375, 21.4126497]
+        },
+        {
+            "description": "Bưu cục Lai Châu",
+            "coordinates": [103.45465108800005, 22.39564271100005]
+        },
+        {
+            "description": "Bưu cục Phú Thọ",
+            "coordinates": [105.3563355, 21.3535664]
+        },
+        {
+            "description": "Bưu cục Hà Giang",
+            "coordinates": [104.9833625, 22.8163208]
+        },
+        {
+            "description": "Bưu cục Tuyên Quang",
+            "coordinates": [105.2025836, 21.8228393]
+        },
+        {
+            "description": "Bưu cục Cao Bằng",
+            "coordinates": [106.2258091, 22.6831351]
+        },
+        {
+            "description": "Bưu cục Thái Nguyên",
+            "coordinates": [105.8249535, 21.6012886]
+        },
+        {
+            "description": "Bưu cục Lạng Sơn",
+            "coordinates": [106.6119475, 22.0544711]
+        },
+        {
+            "description": "Bưu cục Quảng Ninh",
+            "coordinates": [106.6047185, 21.0804108]
+        },
+        {
+            "description": "Bưu cục Hà Nam",
+            "coordinates": [105.9047701, 20.5324839]
+        },
+        {
+            "description": "Bưu cục Hải Dương",
+            "coordinates": [106.32936866600005, 20.950968181000064]
+        },
+        {
+            "description": "Bưu cục Hải Phòng",
+            "coordinates": [106.70794990300004, 20.82742828800008]
+        },
+        {
+            "description": "Bưu cục Hưng Yên",
+            "coordinates": [106.0623773, 20.657956]
+        },
+        {
+            "description": "Bưu cục Nam Định",
+            "coordinates": [106.1516724, 20.430464]
+        },
+        {
+            "description": "Bưu cục Thái Bình",
+            "coordinates": [106.3488343, 20.4499601]
+        },
+        {
+            "description": "Bưu cục Vĩnh Phúc",
+            "coordinates": [105.60547722600006, 21.32353197900005]
+        },
+        {
+            "description": "Bưu cục Ninh Bình",
+            "coordinates": [105.96591311200007, 20.26047942100007]
+        },
+        {
+            "description": "Bưu cục Yên Bái",
+            "coordinates": [104.68414871900006, 21.880088278000073]
+        }
+
+    ]
+

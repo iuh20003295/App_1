@@ -1,3 +1,111 @@
+// import React, { useEffect, useState } from 'react';
+// import {
+//   View,
+//   Text,
+//   StyleSheet,
+//   TouchableOpacity,
+//   FlatList,
+//   Alert,
+//   ActivityIndicator,
+// } from 'react-native';
+// import axios from 'axios';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import DateTimePicker from '@react-native-community/datetimepicker';
+
+// const OrderShip = () => {
+//   const [orders, setOrders] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [deliveryDate, setDeliveryDate] = useState(new Date()); 
+//   const [showDatePicker, setShowDatePicker] = useState(false); 
+
+//   useEffect(() => {
+//     const fetchOrders = async () => {
+//       setLoading(true);
+//       try {
+//         const employeeId = await AsyncStorage.getItem('employee_id');
+//         if (employeeId) {
+//           const formattedDate = deliveryDate.toISOString().split('T')[0]; // Định dạng ngày thành YYYY-MM-DD
+//           const response = await axios.post('https://qship.pro.vn/API_QSHIP/delivery/getOrders', {
+//             employee_id: employeeId,
+//             delivery_date: formattedDate,
+//           });
+
+//           if (response.data.success) {
+//             // Lọc đơn hàng chỉ lấy phần ngày 'YYYY-MM-DD' từ 'delivery_date' và trạng thái là 'pending'
+//             const filteredOrders = response.data.data.filter(order => 
+//               order.delivery_date.split(' ')[0] === formattedDate && order.status === 'pending' // So sánh phần ngày của 'delivery_date' và trạng thái
+//             );
+//             setOrders(filteredOrders); // Cập nhật danh sách đơn hàng
+//           } else {
+//             Alert.alert('Lỗi', response.data.message);
+//           }
+//         }
+//       } catch (error) {
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchOrders();
+//   }, [deliveryDate]);
+
+//   const renderOrderItem = ({ item }) => (
+//     <View style={styles.orderItem}>
+//       <Text style={styles.orderText}>Mã đơn hàng: <Text style={styles.orderNumber}>{item.order_number}</Text></Text>
+//       <Text style={styles.orderText}>Tên đơn hàng: {item.order_name}</Text>
+//       <Text style={styles.orderText}>Người nhận: {item.recipient_name}</Text>
+//       <Text style={styles.orderText}>Địa chỉ: {item.shipping_address}</Text>
+//       <Text style={styles.orderText}>Trạng thái: <Text style={styles[item.status]}>{item.status}</Text></Text>
+//       <Text style={styles.orderText}>Ngày giao: {item.delivery_date}</Text>
+//     </View>
+//   );
+
+//   const showPicker = () => {
+//     setShowDatePicker(true);
+//   };
+
+//   const onChange = (event, selectedDate) => {
+//     if (event.type === 'set') { // Kiểm tra nếu người dùng chọn ngày
+//       const currentDate = selectedDate || deliveryDate;
+//       setShowDatePicker(false);
+//       setDeliveryDate(currentDate); // Cập nhật ngày đã chọn
+//     } else {
+//       setShowDatePicker(false); // Đóng DateTimePicker nếu không chọn
+//     }
+//   };
+
+//   return (
+//     <View style={styles.container}>
+//       <Text style={styles.header}>Danh sách đơn hàng</Text>
+//       <TouchableOpacity style={styles.datePickerButton} onPress={showPicker}>
+//         <Text style={styles.datePickerText}>
+//           {deliveryDate.toLocaleDateString()} {/* Hiển thị ngày hiện tại */}
+//         </Text>
+//       </TouchableOpacity>
+//       {showDatePicker && (
+//         <DateTimePicker
+//           testID="dateTimePicker"
+//           value={deliveryDate}
+//           mode="date"
+//           display="default"
+//           onChange={onChange}
+//         />
+//       )}
+//       {loading ? (
+//         <ActivityIndicator size="large" color="#007BFF" />
+//       ) : orders.length === 0 ? (
+//         <Text style={styles.noOrdersText}>Không có đơn hàng</Text> // Hiển thị khi không có đơn hàng
+//       ) : (
+//         <FlatList
+//           data={orders}
+//           renderItem={renderOrderItem}
+//           keyExtractor={(item) => item.schedule_id}
+//         />
+//       )}
+//     </View>
+//   );
+// };
+
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -11,42 +119,46 @@ import {
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useNavigation } from '@react-navigation/native';
 
 const OrderShip = () => {
+  const navigation = useNavigation();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [deliveryDate, setDeliveryDate] = useState(new Date()); // Ngày mặc định
-  const [showDatePicker, setShowDatePicker] = useState(false); // Trạng thái hiển thị date picker
+  const [deliveryDate, setDeliveryDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const fetchOrders = async (selectedDate) => {
+    setLoading(true);
+    setOrders([]); // Xóa danh sách đơn hàng trước khi tải dữ liệu mới
+    try {
+      const employeeId = await AsyncStorage.getItem('employee_id');
+      if (employeeId) {
+        const formattedDate = selectedDate.toISOString().split('T')[0]; // Định dạng ngày thành YYYY-MM-DD
+        const response = await axios.post('https://qship.pro.vn/API_QSHIP/delivery/getOrders', {
+          employee_id: employeeId,
+          delivery_date: formattedDate,
+        });
+
+        if (response.data.success) {
+          // Lọc đơn hàng chỉ lấy phần ngày 'YYYY-MM-DD' từ 'delivery_date' và trạng thái là 'pending'
+          const filteredOrders = response.data.data.filter(order =>
+            order.delivery_date.split(' ')[0] === formattedDate && order.status === 'pending' // So sánh phần ngày của 'delivery_date' và trạng thái
+          );
+          setOrders(filteredOrders); // Cập nhật danh sách đơn hàng
+        } else {
+          Alert.alert('Lỗi', response.data.message);
+        }
+      }
+    } catch (error) {
+      // Alert.alert('Lỗi', 'Không thể tải đơn hàng');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      try {
-        const employeeId = await AsyncStorage.getItem('employee_id');
-        if (employeeId) {
-          const formattedDate = deliveryDate.toISOString().split('T')[0]; // Định dạng ngày thành YYYY-MM-DD
-          const response = await axios.post('https://qship.pro.vn/API_QSHIP/delivery/getOrders', {
-            employee_id: employeeId,
-            delivery_date: formattedDate,
-          });
-
-          if (response.data.success) {
-            // Lọc đơn hàng chỉ lấy phần ngày 'YYYY-MM-DD' từ 'delivery_date' và trạng thái là 'pending'
-            const filteredOrders = response.data.data.filter(order => 
-              order.delivery_date.split(' ')[0] === formattedDate && order.status === 'pending' // So sánh phần ngày của 'delivery_date' và trạng thái
-            );
-            setOrders(filteredOrders); // Cập nhật danh sách đơn hàng
-          } else {
-            Alert.alert('Lỗi', response.data.message);
-          }
-        }
-      } catch (error) {
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchOrders();
+    fetchOrders(deliveryDate); // Gọi hàm fetchOrders với ngày hiện tại khi trang được mở
   }, [deliveryDate]);
 
   const renderOrderItem = ({ item }) => (
@@ -57,6 +169,9 @@ const OrderShip = () => {
       <Text style={styles.orderText}>Địa chỉ: {item.shipping_address}</Text>
       <Text style={styles.orderText}>Trạng thái: <Text style={styles[item.status]}>{item.status}</Text></Text>
       <Text style={styles.orderText}>Ngày giao: {item.delivery_date}</Text>
+      <TouchableOpacity>
+          <Text style={styles.detailOrder} onPress={()=>navigation.navigate('ForgotPass')}>Xem chi tiết</Text>
+        </TouchableOpacity>    
     </View>
   );
 
@@ -69,6 +184,7 @@ const OrderShip = () => {
       const currentDate = selectedDate || deliveryDate;
       setShowDatePicker(false);
       setDeliveryDate(currentDate); // Cập nhật ngày đã chọn
+      fetchOrders(currentDate); // Gọi API khi người dùng chọn ngày mới
     } else {
       setShowDatePicker(false); // Đóng DateTimePicker nếu không chọn
     }
@@ -120,6 +236,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333',
   },
+  detailOrder:{
+    color: 'red',
+    textAlign: 'right',
+    fontWeight: 'bold',
+    fontSize: 17,
+  },
   orderItem: {
     padding: 15,
     marginVertical: 8,
@@ -135,6 +257,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
     color: '#555',
+    fontWeight: 'bold',
+
   },
   orderNumber: {
     fontWeight: 'bold',

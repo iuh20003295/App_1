@@ -254,12 +254,18 @@ const HomePage = () => {
     try {
       // Xóa token và username khỏi AsyncStorage
       await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('jwt_token');
       await AsyncStorage.removeItem('customer_name');
+      await AsyncStorage.removeItem('customer_id');
+      await AsyncStorage.setItem('isLoggedIn', 'false'); 
+      await AsyncStorage.removeItem('userRole');
+
+      // await AsyncStorage.removeItem('userRole');
 
       // Điều hướng về màn hình đăng nhập
       navigation.reset({
         index: 0,
-        routes: [{ name: 'HomePage' }], // Đảm bảo người dùng không quay lại ShipPage
+        routes: [{ name: 'Login' }], // Đảm bảo người dùng không quay lại ShipPage
       });
     } catch (error) {
       console.error('Lỗi khi đăng xuất:', error);
@@ -322,9 +328,15 @@ const HomePage = () => {
               </TouchableOpacity>
               <TouchableOpacity style={styles.modalButton} onPress={() => {
                 toggleModal();
-                navigation.navigate('Follow');
+                navigation.navigate('Order');
               }}>
                 <Text style={styles.modalText}>Theo dõi</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modalButton} onPress={() => {
+                toggleModal();
+                navigation.navigate('Adds');
+              }}>
+                <Text style={styles.modalText}>Tạo đơn hàng pro</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.modalButton} onPress={() => {
                 toggleModal();
@@ -559,7 +571,7 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor: '#FFCC00',
+    backgroundColor: '#FF8E3C',
     borderRadius: 10,
     width: '100%',
   },
